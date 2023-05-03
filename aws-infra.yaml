@@ -1,0 +1,59 @@
+Resources:
+  
+  CFGeneratedMap:
+    Type: AWS::Location::Map
+    Properties: 
+      Configuration: 
+        Style: "VectorEsriTopographic"
+      MapName: "cloud-formation-map"
+  
+  CFGeneratedIndex:
+    Type: AWS::Location::PlaceIndex
+    Properties: 
+      DataSource: "Esri"
+      DataSourceConfiguration: 
+        IntendedUse: "SingleUse"
+      IndexName: "cloud-formation-index"
+  
+  CFGeneratedIP:
+    Type: AWS::Cognito::IdentityPool
+    Properties: 
+      AllowUnauthenticatedIdentities: True
+      IdentityPoolName: "map-ip"
+
+  CFGeneratedIPRoleUnauth:
+    Type: AWS::Cognito::IdentityPoolRoleAttachment
+    Properties: 
+      IdentityPoolId: !Ref CFGeneratedIP
+      Roles: 
+        "unauthenticated": !GetAtt UnAuthenticatedRole.Arn 
+
+  UnAuthenticatedRole: 
+      Type: "AWS::IAM::Role"
+      Properties: 
+        AssumeRolePolicyDocument: 
+          Version: "2012-10-17"
+          Statement: 
+            - Effect: "Allow"
+              Principal: 
+                Federated: 
+                  - "cognito-identity.amazonaws.com"
+              Action: 
+                - "sts:AssumeRoleWithWebIdentity"
+
+  UnAuthenticatedRolePolicy: 
+    Type: "AWS::IAM::Policy"
+    Properties: 
+      PolicyName: "root"
+      PolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - Effect: "Allow"
+            Action:
+              - "geo:GetMap*"
+              - "geo:Search*"
+            Resource: 
+              - !GetAtt CFGeneratedMap.Arn
+              - !GetAtt CFGeneratedIndex.Arn
+      Roles: 
+        - Ref: "UnAuthenticatedRole"
