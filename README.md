@@ -1,4 +1,6 @@
 # SEARCH PLACES
+The [AWS Location Service](https://aws.amazon.com/location/) enables rendering maps, searching locations, and tracking device positions.
+
 This project is based on the [AWS Quick Start](https://docs.aws.amazon.com/location/latest/developerguide/qs-web.html) guide for a web application that shows data about a chosen map place. 
 
 I also added a [AWS CloudFormation](https://aws.amazon.com/cloudformation/) template ([aws-infra.yaml](./aws-infra.yaml)) that enables easily provisioning the AWS infrastructure.
